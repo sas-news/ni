@@ -31,7 +31,8 @@
     "nu": "bin/nu.mjs",
     "nlx": "bin/nlx.mjs",
     "na": "bin/na.mjs",
-    "nun": "bin/nun.mjs"
+    "nun": "bin/nun.mjs",
+    "ns": "bin/ns.mjs"
   },
   "files": [
     "bin",
@@ -45,7 +46,8 @@
     "stub": "unbuild --stub",
     "release": "bumpp && npm publish",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "vitest",
+    "ns": "esno src/commands/ns.ts"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.1.1",
