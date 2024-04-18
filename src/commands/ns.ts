@@ -4,7 +4,7 @@ import prompts from '@posva/prompts'
 import c from 'kleur'
 import { Fzf } from 'fzf'
 import { dump, load } from '../storage'
-import { parseNr } from '../parse'
+import { parseNs } from '../parse'
 import { getPackageJSON } from '../fs'
 import { runCli } from '../runner'
 
@@ -50,10 +50,10 @@ runCli(async (agent, args, ctx) => {
     const input = args[0]
     const results = fzf.find(input)
     const selected = results[0]?.item?.key
-    if (selected) {
+    if (selected)
       args[0] = selected
-    }
-  } else if (!ctx?.programmatic) {
+  }
+  else if (!ctx?.programmatic) {
     try {
       const { fn } = await prompts({
         name: 'fn',
@@ -79,5 +79,5 @@ runCli(async (agent, args, ctx) => {
     dump()
   }
 
-  return parseNr(agent, args)
+  return parseNs(agent, args)
 })
