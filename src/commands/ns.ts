@@ -49,9 +49,37 @@ runCli(async (agent, args, ctx) => {
   if (args.length > 0) {
     const input = args[0]
     const results = fzf.find(input)
-    const selected = results[0]?.item?.key
-    if (selected)
-      args[0] = selected
+    if (results.length > 1) {
+      const choices: Choice[] = results.map(result => ({
+        title: result.item.key,
+        value: result.item.key,
+        description: limitText(result.item.description, terminalColumns - 15),
+      }))
+      try {
+        const { fn } = await prompts({
+          name: 'fn',
+          message: 'script to run',
+          type: 'autocomplete',
+          choices,
+          suggest: async (input: string, choices: Choice[]) => {
+            const results = fzf.find(input)
+            const suggestions = results.map(r => choices.find(c => c.value === r.item.key))
+            return suggestions.filter(Boolean) || []
+          },
+        })
+        if (!fn)
+          return
+        args[0] = fn
+      }
+      catch (e) {
+        process.exit(1)
+      }
+    }
+    else {
+      const selected = results[0]?.item?.key
+      if (selected)
+        args[0] = selected
+    }
   }
   else if (!ctx?.programmatic) {
     try {
@@ -60,9 +88,10 @@ runCli(async (agent, args, ctx) => {
         message: 'script to run',
         type: 'autocomplete',
         choices,
-        async suggest(input: string, choices: Choice[]) {
+        suggest: async (input: string, choices: Choice[]) => {
           const results = fzf.find(input)
-          return results.map(r => choices.find(c => c.value === r.item.key))
+          const suggestions = results.map(r => choices.find(c => c.value === r.item.key))
+          return suggestions.filter(Boolean) || []
         },
       })
       if (!fn)
