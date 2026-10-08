@@ -12,11 +12,11 @@ runCli(async (agent, args, ctx) => {
   const storage = await load()
 
   const pkg = getPackageJSON(ctx)
-  const scripts = pkg.scripts || {}
+  const scripts = pkg?.scripts || {}
 
   const names = Object.entries(scripts) as [string, string][]
 
-  if (!names.length)
+  if (!names.length && args.length === 0)
     return
 
   const raw = names
@@ -48,8 +48,8 @@ runCli(async (agent, args, ctx) => {
 
   if (args.length > 0) {
     const input = args[0]
-    const results = fzf.find(input)
-    if (results.length > 1) {
+    const results = raw.some(i => i.key === input) ? [] : fzf.find(input)
+    if (results.length > 1 && !ctx?.programmatic) {
       const choices: Choice[] = results.map(result => ({
         title: result.item.key,
         value: result.item.key,

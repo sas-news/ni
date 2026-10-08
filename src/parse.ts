@@ -88,5 +88,13 @@ export const parseNa = <Runner>((agent, args) => {
 })
 
 export const parseNs = <Runner>((agent, args) => {
+  if (args.length === 0)
+    args.push('start')
+
+  if (args.includes('--if-present')) {
+    args = exclude(args, '--if-present')
+    args[0] = `--if-present ${args[0]}`
+  }
+
   return getCommand(agent, 'run', args)
 })
